@@ -68,18 +68,50 @@
 
 <body>
     <script>
+    var firstTime = true;
+
     function getUrlVars() {
         var vars = {};
         var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m, key, value) {
             vars[key] = value;
         });
+
         return vars;
     }
 
+    function getHText() {
+        var h = document.querySelector("h1");
+        if (h != null) {
+            return h.textContent;
+        }
+        h = document.querySelector("h2");
+        if (h != null) {
+            return h.textContent;
+        }
+        h = document.querySelector("h3");
+        if (h != null) {
+            return h.textContent;
+        }
+        h = document.querySelector("h4");
+        if (h != null) {
+            return h.textContent;
+        }
+        h = document.querySelector("h5");
+        if (h != null) {
+            return h.textContent;
+        }
+        return ""
+    }
 
     function makeLink() {
         compressed = (LZString.compressToEncodedURIComponent(document.querySelector("textarea").value));
-        window.history.replaceState('page2', '', window.location.origin + window.location.pathname + '?w=' + compressed);
+        if (firstTime == true) {
+            firstTime = false
+            window.history.pushState('page2', '', window.location.origin + window.location.pathname + '?w=' + compressed);
+        } else {
+            window.history.replaceState('page2', '', window.location.origin + window.location.pathname + '?w=' + compressed);
+        }
+
         t = document.querySelector('textarea');
         if (t == null) {
             return;
@@ -93,9 +125,12 @@
         console.log("editing");
         decompressed = LZString.decompressFromEncodedURIComponent(vars['w']);
         var div = document.querySelector("body");
+        var h1 = document.createElement("h1");
         var input = document.createElement("textarea");
         var count = document.createElement("div");
         input.rows = "30";
+        h1.textContent = "Markdown + Reload"
+        div.appendChild(h1);
         div.appendChild(input);
         div.appendChild(count);
         input.innerHTML = decompressed;
@@ -109,7 +144,6 @@
                 makeLink();
             });
         }
-        makeLink();
     } else if ("w" in vars) {
         console.log("have link");
         var div = document.querySelector("body");
@@ -121,6 +155,8 @@
         console.log('error')
     }
     console.log('loaded')
+
+    document.title = getHText();
     </script>
 </body>
 
