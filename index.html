@@ -79,7 +79,7 @@
 
     function makeLink() {
         compressed = (LZString.compressToEncodedURIComponent(document.querySelector("textarea").value));
-        window.history.replaceState('page2', '', '/?w=' + compressed);
+        window.history.replaceState('page2', '', window.location.origin + window.location.pathname + '?w=' + compressed);
         t = document.querySelector('textarea');
         if (t == null) {
             return;
