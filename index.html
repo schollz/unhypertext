@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width">
+    <meta name="robots" content="all">
+    <meta http-equiv="imagetoolbar" content="false">
+    <link rel="Shortcut Icon" href="/favicon.ico" type="image/x-icon">
+    <title>&nbsp;</title>
+    <style type="text/css">
+    body {
+        margin: 2em auto;
+        max-width: 650px;
+        line-height: 1.4em;
+        font-size: 1em;
+        color: #333;
+        padding: 0 10px;
+        font-family: Courier New;
+    }
+
+    a {
+        color: #555;
+        text-decoration-style: wavy;
+    }
+
+    blockquote {
+        font-style: italic;
+    }
+
+    h1 {
+        text-align: center;
+    }
+
+    textarea {
+        width: 100%;
+        padding: 1em;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        padding-top: 1em;
+        line-height: 1em;
+        font-size: 1em;
+    }
+
+
+    pre {
+        background: #eee;
+        padding: 1em;
+        border-radius: 1em;
+        white-space: pre-wrap;
+        white-space: -moz-pre-wrap;
+        white-space: -pre-wrap;
+        white-space: -o-pre-wrap;
+        word-wrap: break-word;
+    }
+    </style>
+    <!-- node_modules/lz-string/libs/lz-string.js -->
+    <script src="https://ipfs.io/ipfs/QmXYyn8RJdvhaKt19AsDZZKwrE23fuSJ4YetgjZx9BiStF"></script>
+    <!-- node_modules/showdown/dist/showdown.js -->
+    <script src="https://ipfs.io/ipfs/QmcK64xWSxKvvYhCqG81GKQPAfwxbmsSHaZd6Nx2VRnGdW"></script>
+</head>
+
+<body>
+    <script>
+    function getUrlVars() {
+        var vars = {};
+        var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m, key, value) {
+            vars[key] = value;
+        });
+        return vars;
+    }
+
+
+    function makeLink() {
+        compressed = (LZString.compressToEncodedURIComponent(document.querySelector("textarea").value));
+        window.history.replaceState('page2', '', '/?w=' + compressed);
+        t = document.querySelector('textarea');
+        if (t == null) {
+            return;
+        }
+        var n = 2083 - (window.origin.length + compressed.length);
+        document.querySelector('div').innerText = n + ' bytes remaining.';
+    }
+
+    vars = getUrlVars();
+    if ("e" in vars || !("w" in vars)) {
+        console.log("editing");
+        decompressed = LZString.decompressFromEncodedURIComponent(vars['w']);
+        var div = document.querySelector("body");
+        var input = document.createElement("textarea");
+        var count = document.createElement("div");
+        input.rows = "30";
+        div.appendChild(input);
+        div.appendChild(count);
+        input.innerHTML = decompressed;
+        var area = document.querySelector('textarea');
+        if (area.addEventListener) {
+            area.addEventListener('input', function() {
+                makeLink();
+            }, false);
+        } else if (area.attachEvent) {
+            area.attachEvent('onpropertychange', function() {
+                makeLink();
+            });
+        }
+        makeLink();
+    } else if ("w" in vars) {
+        console.log("have link");
+        var div = document.querySelector("body");
+        sd = new showdown.Converter();
+        decompressed = LZString.decompressFromEncodedURIComponent(vars['w']);
+        div.innerHTML = sd.makeHtml(decompressed);
+        console.log('decompressed ' + vars['w'].length + ' to ' + decompressed.length)
+    } else {
+        console.log('error')
+    }
+    console.log('loaded')
+    </script>
+</body>
+
+</html>
